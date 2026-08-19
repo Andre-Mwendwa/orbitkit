@@ -1,0 +1,15 @@
+# filename: infra/ansible/deploy.yml
+- name: Run orbitkit on the local Docker Desktop engine
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Start orbitkit container on the Terraform-created network
+      community.docker.docker_container:
+        name: orbitkit
+        image: "ghcr.io/andre-m/orbitkit:{{ image_tag }}"
+        networks:
+          - name: orbitkit-net
+        ports:
+          - "8080:8080"
+        state: started
+        restart_policy: always
