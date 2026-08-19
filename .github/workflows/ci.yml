@@ -1,0 +1,27 @@
+# filename: .github/workflows/ci.yml
+name: CI
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-test-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps & run tests
+        run: |
+          pip install -r app/requirements.txt pytest
+          pytest app/tests/ -v
+
+      - name: Build image
+        run: docker build -t orbitkit:${{ github.sha }} .
+
+      - name: Log in to registry
+        run: echo "${{ secrets.REGISTRY_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        run: |
+          docker tag orbitkit:${{ github.sha }} ghcr.io/andre-mwendwa/orbitkit:${{ github.sha }}
+          docker push ghcr.io/andre-mwendwa/orbitkit:${{ github.sha }}
