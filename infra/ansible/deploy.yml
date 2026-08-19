@@ -6,7 +6,7 @@
     - name: Start orbitkit container on the Terraform-created network
       community.docker.docker_container:
         name: orbitkit
-        image: "hcr.io/andre-mwendwa/orbitkit:{{ image_tag }}"
+        image: "ghcr.io/andre-mwendwa/orbitkit:{{ image_tag }}"
         networks:
           - name: orbitkit-net
         ports:
